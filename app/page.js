@@ -6,6 +6,7 @@ import Loading from "@/components/Loading";
 import Login from "@/components/Login";
 import Sidebar from "@/components/Sidebar";
 import { serverTimestamp } from "firebase/firestore";
+
 export default function Home() {
   const [user, loading] = useAuthState(auth);
 

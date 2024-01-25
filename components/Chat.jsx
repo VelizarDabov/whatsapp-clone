@@ -1,7 +1,8 @@
+"use client";
 import { auth, db } from "@/firebase";
 import getRecipientEmail from "@/lib/getRecipientEmail";
 import { Avatar } from "@mui/material";
-import React from "react";
+import { useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import styled from "styled-components";
@@ -9,21 +10,19 @@ import styled from "styled-components";
 const ChatComponent = ({ id, users }) => {
   const [user] = useAuthState(auth);
   const recipientEmail = getRecipientEmail(users, user);
+  const router = useRouter();
   const [recipientSnapshot] = useCollection(
     db.collection("users").where("email", "==", getRecipientEmail(users, user))
   );
-//   const recipient = recipientSnapshot?.docs?.[0];
- 
-  
+  //   const recipient = recipientSnapshot?.docs?.[0];
+  const enterChat = () => {
+    router.push(`/chat/${id}`);
+  };
+
   return (
-    <Container>
-      {/* {recipient ? (
-        <UserAvatar src={recipient?.photoURL} />
-      ) : (
-        <UserAvatar>{recipientEmail[0]}</UserAvatar>
-      )} */}
-       <UserAvatar>{recipientEmail[0]}</UserAvatar>
-     
+    <Container onClick={enterChat}>
+      <UserAvatar>{recipientEmail[0]}</UserAvatar>
+
       <p>{recipientEmail}</p>
     </Container>
   );
