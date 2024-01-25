@@ -3,21 +3,45 @@ import { Chat, MoreVert, SearchOutlined } from "@mui/icons-material";
 import { Avatar, Button, IconButton } from "@mui/material";
 import React from "react";
 import styled from "styled-components";
-import * as EmailValidator from 'email-validator'
+import * as EmailValidator from "email-validator";
+import { auth, db } from "@/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useCollection } from "react-firebase-hooks/firestore";
+import ChatComponent from "./Chat";
 const Sidebar = () => {
-    const createChat = () => {
-        const input = prompt('Please enter an email address for the user you wish to chat with')
+  const [user] = useAuthState(auth);
+  console.log(user.photoURL)
+  const userChatRef = db
+    .collection("chats")
+    .where("users", "array-contains", user.email);
+  const [chatSnapshot] = useCollection(userChatRef);
+  const chatAlreadyExist = (recipientEmail) => {
+    !!chatSnapshot?.docs.find(
+      (chat) =>
+        chat.data().users.find((user) => user === recipientEmail)?.length > 0
+    );
+  };
+  const createChat = () => {
+    const input = prompt(
+      "Please enter an email address for the user you wish to chat with"
+    );
 
-        if(!input) return null;
-if(EmailValidator.validate(input)){
-    
-}
-
+    if (!input) return null;
+    if (
+      EmailValidator.validate(input) &&
+      !chatAlreadyExist(input) &&
+      input !== user.email
+    ) {
+      db.collection("chats").add({
+        users: [user.email, input],
+      });
     }
+  
+  };
   return (
     <Container>
       <Header>
-        <UserAvatar />
+        <UserAvatar src={user.photoURL} onClick={() => auth.signOut()} />
 
         <IconsContainer>
           <IconButton>
@@ -36,7 +60,9 @@ if(EmailValidator.validate(input)){
       <SidebarButton onClick={createChat}>Start a new chat</SidebarButton>
 
       {/* chats */}
-
+      {chatSnapshot?.docs.map((chat) => (
+        <ChatComponent key={chat.id} id={chat.id} users={chat.data().users} />
+      ))}
     </Container>
   );
 };
