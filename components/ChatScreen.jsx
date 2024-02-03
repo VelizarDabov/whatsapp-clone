@@ -29,13 +29,7 @@ const sendMessage = (e) => {
     })
     setInput('')
 };
-// const [messagesSnapshot] = useCollection(
-//   db
-//     .collection("chats")
-//     .doc(user.uid)
-//     .collection("messages")
-//     .orderBy("timestamp", "asc")
-// );
+
 const showMessages = () => {
   if (messagesSnapshot) {
     return messagesSnapshot.docs.map((message) => (
@@ -49,12 +43,7 @@ const showMessages = () => {
       />
     ));
       }
-  // }else{
-  //   return JSON.parse(messages).map(message => (
-  //         <Messages key={message.id} user={user.uid} message={message}/>
-  //       ))
-  // }
-};
+    }
   return (
     <Container>
       <Header>

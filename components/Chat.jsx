@@ -14,7 +14,6 @@ const ChatComponent = ({ id, users }) => {
   const [recipientSnapshot] = useCollection(
     db.collection("users").where("email", "==", getRecipientEmail(users, user))
   );
-  //   const recipient = recipientSnapshot?.docs?.[0];
   const enterChat = () => {
     router.push(`/chat/${id}`);
   };
